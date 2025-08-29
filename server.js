@@ -5,6 +5,7 @@ const cors = require('cors');
 const db = require('./database.js');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -999,3 +1000,4 @@ app.get('/api/vendeur/commandes', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur http://localhost:${PORT}`);
 });
+
