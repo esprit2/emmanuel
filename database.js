@@ -29,61 +29,7 @@ async function hashPassword(password) {
 
 
 
-            // 3. Table des produits
-            db.run(`CREATE TABLE IF NOT EXISTS products (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                description TEXT,
-                price REAL NOT NULL,
-                category_id INTEGER,
-                seller_id INTEGER NOT NULL,
-                image_url TEXT,
-                quantity_available INTEGER DEFAULT 0 NOT NULL,
-                created_at DATETIME DEFAULT (datetime('now','localtime')),
-                FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL ON UPDATE CASCADE,
-                FOREIGN KEY (seller_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
-            )`, (err) => {
-                if (err) console.error("Erreur table 'products':", err.message);
-                else console.log("Table 'products' prête.");
-            });
-
-            // 4. Table orders
-           // database.js
-// ... (votre code existant)
-
-// 4. Table orders
-db.run(`CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    buyer_id INTEGER NOT NULL,
-    order_date DATETIME DEFAULT (datetime('now','localtime')),
-    total_amount REAL NOT NULL,
-    status TEXT NOT NULL DEFAULT 'en préparation' 
-           CHECK(status IN ('en préparation', 'expédié', 'livré', 'annulé', 'remboursé')),
-    shipping_address_json TEXT,
-    delivery_method TEXT,
-    payment_method TEXT, -- Assurez-vous que cette ligne est présente
-    FOREIGN KEY (buyer_id) REFERENCES users (id) ON DELETE CASCADE 
-)`, (err) => {
-    if (err) console.error("Erreur table 'orders':", err.message);
-    else console.log("Table 'orders' prête.");
-});
-
-// ... (votre code existant)
-            // 5. Table order_items
-            db.run(`CREATE TABLE IF NOT EXISTS order_items (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                order_id INTEGER NOT NULL,
-                product_id INTEGER, /* Peut être NULL si le produit est supprimé */
-                seller_id INTEGER NOT NULL, 
-                quantity INTEGER NOT NULL,
-                price_at_purchase REAL NOT NULL,
-                FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE,
-                FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE SET NULL, 
-                FOREIGN KEY (seller_id) REFERENCES users (id) ON DELETE CASCADE 
-            )`, (err) => {
-                if (err) console.error("Erreur table 'order_items':", err.message);
-                else console.log("Table 'order_items' prête.");
-            });
+         
    
 //  crée l'admin par défaut
 async function createDefaultAdmin() {
@@ -188,3 +134,4 @@ async function insertDefaultTestimonials() {
         }
     });
 }
+
