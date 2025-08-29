@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marché Local - Modifier le Produit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen flex flex-col">
+<!-- HTML del Loader -->
+<div id="page-loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-stone-100">
+    <div class="loader-container">
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+    </div>
+</div>
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="index.html" class="text-2xl font-bold text-orange-900">Nexcard</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-stone-600 hover:text-orange-900 px-3 py-2 rounded-md text-sm font-medium">Accueil Boutique</a>
+                        <a href="dashboard-vendeur.html" class="text-stone-600 hover:text-orange-900 px-3 py-2 rounded-md text-sm font-medium">Mon Tableau de Bord</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div id="user-action-area" class="flex items-center">
+                         <a href="connexion.html" class="text-stone-600 hover:text-orange-900 px-3 py-2 rounded-md text-sm font-medium">Connexion</a>
+                         <a href="inscription.html" class="ml-2 md:ml-4 text-stone-600 hover:text-orange-900 px-3 py-2 rounded-md text-sm font-medium">S'inscrire</a>
+                    </div>
+                    <div class="ml-2 md:hidden">
+                         <button type="button" id="mobile-menu-button-modifier-produit" class="p-2 rounded-md text-stone-400">
+                            <span class="sr-only">Menu</span> &#9776;
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="md:hidden hidden" id="mobile-menu-modifier-produit-content">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block py-2.5 px-4 rounded font-medium text-stone-700 hover:bg-orange-50 hover:text-orange-700">Accueil Boutique</a>
+                <a href="dashboard-vendeur.html" class="block py-2.5 px-4 rounded font-medium text-stone-700 hover:bg-orange-50 hover:text-orange-700">Mon Tableau de Bord</a>
+                <div id="mobile-user-action-area" class="border-t border-gray-200 pt-2 mt-2">
+                    {/* Sera rempli par js/main.js */}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+        <div class="max-w-2xl mx-auto">
+            <a href="dashboard-vendeur.html#mes-produits-vendeur" class="text-sm text-orange-700 hover:underline mb-6 inline-block">&larr; Retour à Mes Produits</a>
+            <div id="edit-product-form-container" class="bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-stone-800 mb-6">Modifier le Produit</h1>
+                <p id="loading-product-message" class="text-stone-600 mb-4">Chargement des informations du produit...</p>
+                <p id="general-edit-product-error" class="mb-4 text-sm text-center text-red-600 hidden"></p>
+
+                <form id="edit-product-form" class="space-y-6 hidden">
+                    <input type="hidden" id="product-id" name="productId">
+                    <div>
+                        <label for="edit-product-name" class="block text-sm font-medium text-stone-700">Nom du produit</label>
+                        <input type="text" id="edit-product-name" name="name" required class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                        <p class="mt-1 text-xs text-red-600 hidden" id="edit-product-name-error"></p>
+                    </div>
+
+                    <div>
+                        <label for="edit-product-description" class="block text-sm font-medium text-stone-700">Description</label>
+                        <textarea id="edit-product-description" name="description" rows="4" required class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"></textarea>
+                        <p class="mt-1 text-xs text-red-600 hidden" id="edit-product-description-error"></p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="edit-product-price" class="block text-sm font-medium text-stone-700">Prix (€)</label>
+                            <input type="number" id="edit-product-price" name="price" step="0.01" min="0.01" required class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                            <p class="mt-1 text-xs text-red-600 hidden" id="edit-product-price-error"></p>
+                        </div>
+                        <div>
+                            <label for="edit-product-quantity" class="block text-sm font-medium text-stone-700">Quantité disponible</label>
+                            <input type="number" id="edit-product-quantity" name="quantity_available" min="0" required class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                            <p class="mt-1 text-xs text-red-600 hidden" id="edit-product-quantity-error"></p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="edit-product-category" class="block text-sm font-medium text-stone-700">Catégorie</label>
+                        <select id="edit-product-category" name="category_id" required class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm">
+                            <option value="">Sélectionner une catégorie</option>
+                            {/* Les options seront chargées dynamiquement */}
+                        </select>
+                        <p class="mt-1 text-xs text-red-600 hidden" id="edit-product-category-error"></p>
+                    </div>
+
+                    <div>
+                        <label for="edit-product-image-url" class="block text-sm font-medium text-stone-700">URL de l'image du produit (optionnel)</label>
+                        <input type="url" id="edit-product-image-url" name="image_url" class="mt-1 block w-full px-3 py-2 border border-stone-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm" placeholder="https://exemple.com/image.jpg">
+                        <p class="mt-1 text-xs text-red-600 hidden" id="edit-product-image-url-error"></p>
+                    </div>
+                    
+                    <div class="flex items-center justify-end space-x-3 pt-2">
+                        <a href="dashboard-vendeur.html#mes-produits-vendeur" class="px-4 py-2 text-sm font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-md border border-stone-300">
+                            Annuler
+                        </a>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-orange-700 hover:bg-orange-800 rounded-md border border-transparent shadow-sm">
+                            Enregistrer les Modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Nouveau footer -->
+        <footer class="bg-white border-t border-stone-200 mt-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Colonne 1: Logo et description -->
+                    <div class="col-span-1">
+                        <a href="index.html" class="text-2xl font-bold text-orange-900">Nexcard</a>
+                        <p class="mt-4 text-sm text-stone-600">
+                            Une plateforme numérique pour valoriser le talent et l'artisanat des femmes du marché.
+                        </p>
+                    </div>
+
+                    <!-- Colonne 2: Liens de navigation -->
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-semibold text-stone-800">Navigation</h3>
+                        <ul class="mt-4 space-y-2 text-sm">
+                            <li><a href="index.html" class="text-stone-600 hover:text-orange-700">Accueil</a></li>
+                            <li><a href="catalogue.html" class="text-stone-600 hover:text-orange-700">Catalogue</a></li>
+                            <!-- Ajoutez d'autres liens ici si besoin -->
+                            <li><a href="#" class="text-stone-600 hover:text-orange-700">À propos</a></li>
+                            <li><a href="#" class="text-stone-600 hover:text-orange-700">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Colonne 3: Mon Compte -->
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-semibold text-stone-800">Mon Compte</h3>
+                        <ul class="mt-4 space-y-2 text-sm">
+                            <li><a href="connexion.html" class="text-stone-600 hover:text-orange-700">Connexion</a></li>
+                            <li><a href="inscription.html" class="text-stone-600 hover:text-orange-700">S'inscrire</a></li>
+                            <li><a href="panier.html" class="text-stone-600 hover:text-orange-700">Mon Panier</a></li>
+                            <!-- Le dashboard sera géré dynamiquement par le script principal -->
+                            <li><a href="#" id="footer-dashboard-link" class="text-stone-600 hover:text-orange-700">Mon Espace</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Colonne 4: Contact -->
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-semibold text-stone-800">Contact</h3>
+                        <ul class="mt-4 space-y-2 text-sm text-stone-600">
+                            <li>Email: contact@nexcard.com</li>
+                            <li>Téléphone: +225 01 23 45 67 89</li>
+                            <li>Adresse: Abidjan, Côte d'Ivoire</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border-t border-stone-200 py-4 text-center">
+                <p class="text-sm text-stone-500">&copy; <span id="current-year"></span> Nexcard. Tous droits réservés.</p>
+            </div>
+        </footer>
+    <script src="js/main.js"></script>
+    <script src="js/modifier-produit.js"></script> 
+</body>
+</html>

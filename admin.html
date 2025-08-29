@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexcard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .admin-sidebar a { 
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-left-color 0.2s ease-in-out; 
+            border-left: 3px solid transparent; 
+        }
+        .admin-sidebar a.active, .admin-sidebar a:hover { 
+            background-color: #4a5568; /* gray-700 */ 
+            color: white; 
+            border-left-color: #fb923c; /* orange-400 */
+        }
+        .admin-stat-card { transition: transform 0.2s ease-in-out; }
+        .admin-stat-card:hover { transform: translateY(-5px); }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+        .table-cell-actions button:not(:last-child) { margin-right: 0.5rem; }
+    </style>
+</head>
+<body class="bg-gray-800 text-gray-100">
+   <div id="page-loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-stone-100">
+    <div class="loader-container">
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+    </div>
+</div>
+<div class="flex flex-col md:flex-row min-h-screen">
+    <aside class="admin-sidebar w-full md:w-64 bg-gray-900 p-6 space-y-4 shadow-lg md:h-screen md:sticky md:top-0 flex-shrink-0">
+        <div class="flex justify-between items-center">
+            <div>
+                <a href="/index.html" class="text-2xl font-bold text-orange-400 hover:text-orange-300">Nexcard</a>
+                <p class="text-xs text-gray-400">Panneau Admin</p>
+            </div>
+            <button id="admin-mobile-menu-button" class="md:hidden p-2 rounded-md hover:bg-gray-700">
+                <span class="sr-only">Ouvrir/Fermer le menu</span>
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+        <div id="admin-sidebar-nav" class="hidden md:block">
+            <nav class="mt-8 flex-grow">
+                <a href="#vue-ensemble-admin" class="admin-nav-link block py-2.5 px-4 rounded font-medium text-gray-300">Vue d'ensemble</a>
+                <a href="#gestion-utilisateurs-admin" class="admin-nav-link block py-2.5 px-4 rounded font-medium text-gray-300">Utilisateurs</a>
+                <a href="#gestion-produits-admin" class="admin-nav-link block py-2.5 px-4 rounded font-medium text-gray-300">Produits</a>
+                <a href="#gestion-commandes-admin" class="admin-nav-link block py-2.5 px-4 rounded font-medium text-gray-300">Commandes</a>
+                <a href="#gestion-temoignages-admin" class="admin-nav-link block py-2.5 px-4 rounded font-medium text-gray-300">Témoignages</a>
+            </nav>
+            <div class="mt-auto pt-4">
+                 <a href="#" id="admin-logout-button" class="block text-center py-2.5 px-4 rounded font-medium text-gray-300 bg-red-600 hover:bg-red-700">Déconnexion</a>
+            </div>
+        </div>
+    </aside>
+
+    <div class="flex-1 p-8 sm:p-10">
+        <section id="gestion-temoignages-admin" class="admin-section hidden">
+    <h1 class="text-3xl font-extrabold text-gray-50 mb-8">Gestion des Témoignages</h1>
+    <div class="bg-gray-700 p-6 rounded-lg shadow-md overflow-x-auto">
+        <p id="admin-testimonials-loading-message" class="text-gray-400 mb-4">Chargement des témoignages...</p>
+        <table id="admin-testimonials-table" class="min-w-full divide-y divide-gray-600 hidden">
+            <thead class="bg-gray-750">
+                <tr>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">ID</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Auteur</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Rôle</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Note</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Contenu (début)</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Date</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-300 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="admin-testimonials-tbody" class="bg-gray-700 divide-y divide-gray-600">
+                {/* Rempli par JS */}
+            </tbody>
+        </table>
+        <p id="admin-no-testimonials-message" class="text-gray-400 hidden mt-4">Aucun témoignage à afficher.</p>
+    </div>
+</section>
+        <section id="vue-ensemble-admin" class="admin-section">
+            <h1 class="text-3xl font-extrabold text-gray-50 mb-8">Vue d'ensemble du Marché</h1>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="admin-stat-card bg-gray-700 p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-medium text-gray-400">Utilisateurs Inscrits</h3>
+                    <p id="admin-total-users" class="text-3xl font-bold text-blue-400 mt-2">Chargement...</p>
+                </div>
+                <div class="admin-stat-card bg-gray-700 p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-medium text-gray-400">Vendeurs Actifs</h3>
+                    <p id="admin-total-sellers" class="text-3xl font-bold text-green-400 mt-2">Chargement...</p>
+                </div>
+                <div class="admin-stat-card bg-gray-700 p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-medium text-gray-400">Produits en Ligne</h3>
+                    <p id="admin-total-products" class="text-3xl font-bold text-yellow-400 mt-2">Chargement...</p>
+                </div>
+                <div class="admin-stat-card bg-gray-700 p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-medium text-gray-400">Commandes (Mois)</h3>
+                    <p id="admin-total-orders-month" class="text-3xl font-bold text-red-400 mt-2">Chargement...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="gestion-utilisateurs-admin" class="admin-section hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-extrabold text-gray-50">Gestion des Utilisateurs</h1>
+                <a href="ajout-utilisateur-admin.html" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md">
+                    + Ajouter un Utilisateur
+                </a>
+            </div>
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md overflow-x-auto">
+                <p id="admin-users-loading-message" class="text-gray-400 mb-4">Chargement des utilisateurs...</p>
+                <table id="admin-users-table" class="min-w-full divide-y divide-gray-600 hidden">
+                    <thead class="bg-gray-750">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Nom</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Inscrit le</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-users-tbody" class="bg-gray-700 divide-y divide-gray-600">
+                        {/* Rempli par JS */}
+                    </tbody>
+                </table>
+                <p id="admin-no-users-message" class="text-gray-400 hidden mt-4">Aucun utilisateur (non-admin) à afficher.</p>
+            </div>
+        </section>
+
+        <section id="gestion-produits-admin" class="admin-section hidden">
+            <h1 class="text-3xl font-extrabold text-gray-50 mb-8">Gestion des Produits</h1>
+             <div class="bg-gray-700 p-6 rounded-lg shadow-md">
+                <p class="text-gray-400">Interface de gestion des produits à venir ici...</p>
+            </div>
+        </section>
+
+        <section id="gestion-commandes-admin" class="admin-section hidden">
+            <h1 class="text-3xl font-extrabold text-gray-50 mb-8">Gestion des Commandes</h1>
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md overflow-x-auto">
+                <p id="admin-orders-loading-message" class="text-gray-400 mb-4">Chargement de toutes les commandes...</p>
+                <table id="admin-orders-table" class="min-w-full divide-y divide-gray-600 hidden">
+                    <thead class="bg-gray-750">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">ID Commande</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Acheteur</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Statut</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Méthode de livraison</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Méthode de paiement</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Total</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-orders-tbody" class="bg-gray-700 divide-y divide-gray-600">
+                        {/* Rempli par JS */}
+                    </tbody>
+                </table>
+                <p id="admin-no-orders-message" class="text-gray-400 hidden mt-4">Aucune commande à afficher.</p>
+            </div>
+        </section>
+
+        <section id="gestion-categories-admin" class="admin-section hidden">
+            <h1 class="text-3xl font-extrabold text-gray-50 mb-8">Gestion des Catégories</h1>
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md">
+                <p class="text-gray-400">Interface pour gérer les catégories à venir ici...</p>
+            </div>
+        </section>
+         <section id="gestion-contenu-admin" class="admin-section hidden">
+            <h1 class="text-3xl font-extrabold text-gray-50 mb-8">Gestion du Contenu du Site</h1>
+            <div class="bg-gray-700 p-6 rounded-lg shadow-md">
+                <p class="text-gray-400">Ici, l'admin pourrait modifier des textes de la page d'accueil, gérer des bannières promotionnelles, modifier les pages "À propos", "Contact", etc.</p>
+            </div>
+        </section>
+        
+       
+         
+    </div>
+    
+
+    <script src="js/main.js"></script>
+    <script src="js/admin.js">
+       
+    </script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexcard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .item-image { width: 64px; height: 64px; object-fit: cover; } /* 16x16 tailwind units */
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800 min-h-screen flex flex-col">
+<!-- HTML del Loader -->
+<div id="page-loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-stone-100">
+    <div class="loader-container">
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+        <div class="loader-square"></div>
+    </div>
+</div>
+    
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="index.html" class="text-2xl font-bold text-orange-900">Nexcard</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-stone-600 hover:text-orange-900 px-3 py-2 rounded-md text-sm font-medium">Accueil Boutique</a>
+                        
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div id="user-action-area" class="flex items-center">
+                        <a href="connexion.html" class="text-stone-600 hover:text-orange-900 px-3 py-2 rounded-md text-sm font-medium">Connexion</a>
+                        <a href="inscription.html" class="ml-2 md:ml-4 text-stone-600 hover:text-orange-900 px-3 py-2 rounded-md text-sm font-medium">S'inscrire</a>
+                    </div>
+                     <div class="ml-2 md:hidden">
+                         <button type="button" id="mobile-menu-button-order-detail" class="p-2 rounded-md text-stone-400 focus:outline-none hover:bg-stone-100">
+                            <span class="sr-only">Menu</span> &#9776;
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="md:hidden hidden" id="mobile-menu-order-detail-content">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block py-2.5 px-4 rounded font-medium text-stone-700 hover:bg-orange-50 hover:text-orange-700">Accueil Boutique</a>
+                
+                <div id="mobile-user-action-area" class="border-t border-gray-200 pt-2 mt-2">
+                   
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+        <div class="max-w-3xl mx-auto">
+            <div id="order-detail-loading" class="text-center py-10">
+                <p class="text-xl text-stone-600">Chargement des détails de la commande...</p>
+            </div>
+            <div id="order-detail-error" class="text-center py-10 text-red-600 hidden">
+                <p>Impossible de charger les détails de la commande.</p>
+            </div>
+
+            <div id="order-detail-content" class="hidden bg-white p-6 sm:p-8 rounded-lg shadow-lg">
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 pb-4 border-b border-stone-200">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-stone-800">Commande <span id="order-id-display">#</span></h1>
+                        <p class="text-sm text-stone-500">Passée le : <span id="order-date-display">--/--/----</span></p>
+                    </div>
+                    <div class="mt-4 sm:mt-0">
+                        <span class="text-sm font-medium text-white px-3 py-1 rounded-full" id="order-status-badge">Statut</span>
+                    </div>
+                </div>
+
+                <section class="mb-8">
+                    <h2 class="text-xl font-semibold text-orange-800 mb-3">Articles Commandés</h2>
+                    <div id="order-items-list" class="space-y-4">
+                        
+                    </div>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-xl font-semibold text-orange-800 mb-3">Récapitulatif du Paiement</h2>
+                    <div class="space-y-2 text-stone-700">
+                        <div class="flex justify-between">
+                            <span>Sous-total articles :</span>
+                            <span id="order-subtotal-display">--,-- €</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Frais de port :</span>
+                            <span id="order-shipping-display">--,-- €</span>
+                        </div>
+                        <div class="flex justify-between text-lg font-bold text-stone-900 border-t pt-2 mt-2">
+                            <span>Total Commande :</span>
+                            <span id="order-total-display">--,-- €</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="mb-8">
+                    <h2 class="text-xl font-semibold text-orange-800 mb-3">Adresse de Livraison</h2>
+                    <div id="shipping-address-display" class="text-stone-700 leading-relaxed bg-stone-50 p-4 rounded-md">
+                        <p>Chargement...</p>
+                    </div>
+                </section>
+                
+                <div class="mt-10 text-center">
+                    <a href="#" id="back-to-dashboard-link" class="text-orange-700 hover:text-orange-900 font-medium">&larr; Retour à mes commandes</a>
+                </div>
+            </div>
+        </div>
+    </main>
+  <!-- Nouveau footer -->
+        <footer class="bg-white border-t border-stone-200 mt-16">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- Colonne 1: Logo et description -->
+                    <div class="col-span-1">
+                        <a href="index.html" class="text-2xl font-bold text-orange-900">Nexcard</a>
+                        <p class="mt-4 text-sm text-stone-600">
+                            Une plateforme numérique pour valoriser le talent et l'artisanat des femmes du marché.
+                        </p>
+                    </div>
+
+                    <!-- Colonne 2: Liens de navigation -->
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-semibold text-stone-800">Navigation</h3>
+                        <ul class="mt-4 space-y-2 text-sm">
+                            <li><a href="index.html" class="text-stone-600 hover:text-orange-700">Accueil</a></li>
+                            <li><a href="catalogue.html" class="text-stone-600 hover:text-orange-700">Catalogue</a></li>
+                            <!-- Ajoutez d'autres liens ici si besoin -->
+                            <li><a href="#" class="text-stone-600 hover:text-orange-700">À propos</a></li>
+                            <li><a href="#" class="text-stone-600 hover:text-orange-700">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Colonne 3: Mon Compte -->
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-semibold text-stone-800">Mon Compte</h3>
+                        <ul class="mt-4 space-y-2 text-sm">
+                            <li><a href="connexion.html" class="text-stone-600 hover:text-orange-700">Connexion</a></li>
+                            <li><a href="inscription.html" class="text-stone-600 hover:text-orange-700">S'inscrire</a></li>
+                            <li><a href="panier.html" class="text-stone-600 hover:text-orange-700">Mon Panier</a></li>
+                            <!-- Le dashboard sera géré dynamiquement par le script principal -->
+                            <li><a href="#" id="footer-dashboard-link" class="text-stone-600 hover:text-orange-700">Mon Espace</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Colonne 4: Contact -->
+                    <div class="col-span-1">
+                        <h3 class="text-lg font-semibold text-stone-800">Contact</h3>
+                        <ul class="mt-4 space-y-2 text-sm text-stone-600">
+                            <li>Email: contact@nexcard.com</li>
+                            <li>Téléphone: +225 01 23 45 67 89</li>
+                            <li>Adresse: Abidjan, Côte d'Ivoire</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border-t border-stone-200 py-4 text-center">
+                <p class="text-sm text-stone-500">&copy; <span id="current-year"></span> Nexcard. Tous droits réservés.</p>
+            </div>
+        </footer>
+
+    <script src="js/main.js"></script> 
+    <script src="js/commande-detail.js"></script>
+</body>
+</html>
